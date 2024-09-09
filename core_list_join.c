@@ -155,6 +155,7 @@ copy_info(list_data *to, list_data *from)
         - Single remove/reinsert
         * At the end of this function, the list is back to original state
 */
+__attribute__((target("arch=+zba,+zbb,+zbs,+v")))
 ee_u16
 core_bench_list(core_results *res, ee_s16 finder_idx)
 {

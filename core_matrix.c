@@ -126,6 +126,7 @@ core_bench_matrix(mat_params *p, ee_s16 seed, ee_u16 crc)
 
         After the last step, matrix A is back to original contents.
 */
+__attribute__((target("arch=+zba,+zbb,+zbs,+v")))
 ee_s16
 matrix_test(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B, MATDAT val)
 {
@@ -318,6 +319,7 @@ matrix_mul_vect(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B)
         Basic code is used in many algorithms, mostly with minor changes such as
    scaling.
 */
+__attribute__((target("arch=+zba,+zbb,+zbs,+v")))
 void
 matrix_mul_matrix(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B)
 {
@@ -340,6 +342,7 @@ matrix_mul_matrix(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B)
         Basic code is used in many algorithms, mostly with minor changes such as
    scaling.
 */
+__attribute__((target("arch=+zba,+zbb,+zbs,+v")))
 void
 matrix_mul_matrix_bitextract(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B)
 {

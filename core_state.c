@@ -213,6 +213,7 @@ ee_isdigit(ee_u8 c)
    end state is returned (either specific format determined or invalid).
 */
 
+__attribute__((target("arch=+zba,+zbb,+zbs,+v")))
 enum CORE_STATE
 core_state_transition(ee_u8 **instr, ee_u32 *transition_count)
 {

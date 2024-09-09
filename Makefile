@@ -55,7 +55,7 @@ ifdef REBUILD
 FORCE_REBUILD=force_rebuild
 endif
 
-CFLAGS += -DITERATIONS=$(ITERATIONS)
+CFLAGS += -DITERATIONS=$(ITERATIONS) -static
 
 CORE_FILES = core_list_join core_main core_matrix core_state core_util
 ORIG_SRCS = $(addsuffix .c,$(CORE_FILES))
