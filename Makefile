@@ -147,6 +147,10 @@ coremark-rv64gc_zba_zbb.exe:
 	make CC=riscv64-unknown-linux-gnu-gcc ADDITIONAL_CFLAGS="-march=rv64gc_zba_zbb" compile
 	mv coremark.exe $@
 
+coremark-rv64gcbv.exe:
+	make CC=riscv64-unknown-linux-gnu-gcc ADDITIONAL_CFLAGS="-march=rv64gcbv" compile
+	mv coremark.exe $@
+
 coremark-rv64gcbv_zicond.exe:
 	make CC=riscv64-unknown-linux-gnu-gcc ADDITIONAL_CFLAGS="-march=rv64gcbv_zicond" compile
 	mv coremark.exe $@
@@ -157,11 +161,14 @@ perf-rv64gc.data: coremark-rv64gc.exe
 perf-rv64gc_zba_zbb.data: coremark-rv64gc_zba_zbb.exe
 	ssh -tt musepi "cd ${PWD} && numactl --physcpubind=7 perf record -e r22:u -e r4d:u -o perf-rv64gc_zba_zbb.data ./coremark-rv64gc_zba_zbb.exe"
 
+perf-rv64gcbv.data: coremark-rv64gcbv.exe
+	ssh -tt musepi "cd ${PWD} && numactl --physcpubind=7 perf record -e r22:u -e r4d:u -o perf-rv64gcbv.data ./coremark-rv64gcbv.exe"
+
 perf-rv64gcbv_zicond.data: coremark-rv64gcbv_zicond.exe
 	ssh -tt musepi "cd ${PWD} && numactl --physcpubind=7 perf record -e r22:u -e r4d:u -o perf-rv64gcbv_zicond.data ./coremark-rv64gcbv_zicond.exe"
 
-target_profile.txt: ../pybinutils/src/gen_target_profile.py perf-rv64gc.data perf-rv64gc_zba_zbb.data perf-rv64gcbv_zicond.data
-	$< -a default arch=+zba,+zbb arch=+b,+v,+zicond -p perf-rv64gc.data perf-rv64gc_zba_zbb.data perf-rv64gcbv_zicond.data -b . -e r22:u > $@
+target_profile.txt: ../pybinutils/src/gen_target_profile.py perf-rv64gc.data perf-rv64gc_zba_zbb.data perf-rv64gcbv.data perf-rv64gcbv_zicond.data
+	$< -a default arch=+zba,+zbb arch=+b,+v arch=+b,+v,+zicond -p perf-rv64gc.data perf-rv64gc_zba_zbb.data perf-rv64gcbv.data perf-rv64gcbv_zicond.data -b . -e r22:u > $@
 
 coremark-autofmv.exe: target_profile.txt
 	make CC=riscv64-unknown-linux-gnu-gcc ADDITIONAL_CFLAGS="-ftarget-profile=${PWD}/target_profile.txt" compile
@@ -173,14 +180,18 @@ result-rv64gc.txt: coremark-rv64gc.exe
 result-rv64gc_zba_zbb.txt: coremark-rv64gc_zba_zbb.exe
 	ssh -tt musepi "cd ${PWD} && numactl --physcpubind=7 ./coremark-rv64gc_zba_zbb.exe" > result-rv64gc_zba_zbb.txt
 
+result-rv64gcbv.txt: coremark-rv64gcbv.exe
+	ssh -tt musepi "cd ${PWD} && numactl --physcpubind=7 ./coremark-rv64gcbv.exe" > result-rv64gcbv.txt
+
 result-rv64gcbv_zicond.txt: coremark-rv64gcbv_zicond.exe
 	ssh -tt musepi "cd ${PWD} && numactl --physcpubind=7 ./coremark-rv64gcbv_zicond.exe" > result-rv64gcbv_zicond.txt
 
 result-coremark-autofmv.txt: coremark-autofmv.exe
 	ssh -tt musepi "cd ${PWD} && numactl --physcpubind=7 ./coremark-autofmv.exe" > result-coremark-autofmv.txt
 
-all_result: result-rv64gc.txt result-rv64gc_zba_zbb.txt result-rv64gcbv_zicond.txt result-coremark-autofmv.txt
+all_result: result-rv64gc.txt result-rv64gc_zba_zbb.txt result-rv64gcbv.txt result-rv64gcbv_zicond.txt result-coremark-autofmv.txt
 	cat result-rv64gc.txt | grep "Iterations/Sec"
 	cat result-rv64gc_zba_zbb.txt | grep "Iterations/Sec"
+	cat result-rv64gcbv.txt | grep "Iterations/Sec"
 	cat result-rv64gcbv_zicond.txt | grep "Iterations/Sec"
 	cat result-coremark-autofmv.txt | grep "Iterations/Sec"
