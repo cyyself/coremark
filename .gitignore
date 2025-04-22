@@ -1,0 +1,4 @@
+perf-*
+*.exe
+target_profile.txt
+result-*
