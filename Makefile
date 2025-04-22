@@ -168,7 +168,7 @@ perf-rv64gcbv_zicond.data: coremark-rv64gcbv_zicond.exe
 	ssh -tt musepi "cd ${PWD} && numactl --physcpubind=7 perf record -e r22:u -e r4d:u -o perf-rv64gcbv_zicond.data ./coremark-rv64gcbv_zicond.exe"
 
 target_profile.txt: ../pybinutils/src/gen_target_profile.py perf-rv64gc.data perf-rv64gc_zba_zbb.data perf-rv64gcbv.data perf-rv64gcbv_zicond.data
-	$< -a default arch=+zba,+zbb arch=+b,+v arch=+b,+v,+zicond -p perf-rv64gc.data perf-rv64gc_zba_zbb.data perf-rv64gcbv.data perf-rv64gcbv_zicond.data -b . -e r22:u > $@
+	$< -a default arch=+zba,+zbb arch=+b,+v arch=+b,+v,+zicond -p perf-rv64gc.data perf-rv64gc_zba_zbb.data perf-rv64gcbv.data perf-rv64gcbv_zicond.data -b . -e r22:u -u 0.01 -d 0.02 > $@
 
 coremark-autofmv.exe: target_profile.txt
 	make CC=riscv64-unknown-linux-gnu-gcc ADDITIONAL_CFLAGS="-ftarget-profile=${PWD}/target_profile.txt" compile
